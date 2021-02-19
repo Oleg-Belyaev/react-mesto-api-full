@@ -1,0 +1,25 @@
+.header {
+  max-width: 882px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header::before {
+  content: '';
+  display: block;
+  border-bottom: 1px solid #545454;
+  opacity: 0.7;
+  position: absolute;
+  max-width: 882px;
+  width: 100%;
+  top: 129px;
+  left: 50%;
+  transform: translate(-50%);
+}
+
+@media screen and (max-width: 350px) {
+  .header::before {
+    top: 89px;
+  }
+}

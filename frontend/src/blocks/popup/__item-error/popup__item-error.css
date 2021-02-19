@@ -1,0 +1,9 @@
+.popup__item-error {
+  font-size: 12px;
+  line-height: 1.1;
+  color: #f00;
+  position: absolute;
+  top: calc(100% + 1px);
+  left: 0;
+  opacity: 0;
+}

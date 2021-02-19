@@ -1,0 +1,5 @@
+.auth__submit_inactive {
+  opacity: .3;
+  border: 1px solid #ccc;
+  pointer-events: none;
+}

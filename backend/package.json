@@ -1,0 +1,31 @@
+{
+  "name": "express-mesto",
+  "version": "1.0.0",
+  "description": "express-app",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Oleg-Belyaev/express-mesto.git"
+  },
+  "author": "Oleg Belyaev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Oleg-Belyaev/express-mesto/issues"
+  },
+  "homepage": "https://github.com/Oleg-Belyaev/express-mesto#readme",
+  "devDependencies": {
+    "eslint": "^7.2.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1",
+    "nodemon": "^2.0.6"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.11.9"
+  }
+}

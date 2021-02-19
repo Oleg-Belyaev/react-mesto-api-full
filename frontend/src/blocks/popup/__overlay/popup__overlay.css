@@ -1,0 +1,9 @@
+.popup__overlay {
+  z-index: 11;
+  cursor: pointer;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+}

@@ -1,0 +1,10 @@
+.popup__close_image {
+  top: -23px;
+  right: -1px;
+}
+
+@media screen and (max-width: 510px) {
+  .popup__close_image {
+    right: -6px;
+  }
+}

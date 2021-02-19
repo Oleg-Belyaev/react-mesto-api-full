@@ -1,0 +1,9 @@
+.content__section_has_indent {
+  margin: 51px auto 66px;
+}
+
+@media screen and (max-width: 620px) {
+  .content__section_has_indent {
+    margin: 35px auto 48px;
+  }
+}

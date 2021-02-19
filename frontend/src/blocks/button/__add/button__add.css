@@ -1,0 +1,11 @@
+.button__add {
+  width: 22px;
+  height: 22px;
+}
+
+@media screen and (max-width: 620px) {
+  .button__add {
+    width: 16px;
+    height: 16px;
+  }
+}
