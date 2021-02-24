@@ -24,7 +24,7 @@ function Register (props) {
       </div>
       <div className="auth__field">
         <input type="password" className={`auth__item ${errors.password && "auth__item_type_error"}`} 
-        name="password" placeholder="Пароль" id="password-input" required minLength="6" value={values.password || ''} onChange={handleChange}/>
+        name="password" placeholder="Пароль" id="password-input" required minLength="8" value={values.password || ''} onChange={handleChange}/>
         <span className={`auth__item-error ${errors.password && "auth__item-error_active"}`}>{errors.password}</span>
       </div>
       <button type="submit" className={`auth__submit ${!isValid && "auth__submit_inactive"} `} value="Войти">Войти</button>

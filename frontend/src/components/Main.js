@@ -8,7 +8,6 @@ function Main (props) {
   
   const currentUser = React.useContext(CurrentUserContext);
   const userAvatar = { backgroundImage: `url(${currentUser ? currentUser.avatar : ''})` };
-
   return (
     <main className="content page__section">
       <section className="profile content__section">
@@ -29,10 +28,13 @@ function Main (props) {
         </button>
       </section>
       <section className="elements content__section content__section_has_indent">
-        {props.cards.map((card) => {
+        {
+        props.cards
+        ? props.cards.map((card) => {
         return <Card {...card} key={card._id} onCardClick={props.onCardClick} onCardLike={props.onCardLike} onCardDelete={props.onCardDelete}/>
-        }
-        )}
+        })
+        : 
+        ''}
       </section>
     </main>
   )

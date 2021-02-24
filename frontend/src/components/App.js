@@ -12,7 +12,7 @@ import ProtectedRoute from './ProtectedRoute';
 import Login from './Login';
 import Register from './Register.js';
 import InfoToolTip from './InfoToolTip';
-import { api, apiAuth } from '../utils/api.js';
+import { api } from '../utils/api.js';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import '../index.css';
 
@@ -33,7 +33,7 @@ function App() {
   const [headerLink, setHeaderLink] = React.useState('Регистрация');
   const [isAuthAccept, setIsAuthAccept] = React.useState(false);
   const history = useHistory();
-
+  
   function handleEditProfileClick() {
     setIsEditProfilePopupOpen(true);
   }
@@ -51,8 +51,9 @@ function App() {
   }
 
   function handleUpdateUser(userData) {
+    const token = localStorage.getItem('token')
     setIsLoading(true);
-    api.editUserInfo(userData)
+    api.editUserInfo(userData, token)
     .then((data) => {
       setCurrentUser(data);
       closeAllPopups();
@@ -66,8 +67,9 @@ function App() {
   }
 
   function handleUpdateAvatar(avatar) {
+    const token = localStorage.getItem('token')
     setIsLoading(true);
-    api.editAvatar(avatar)
+    api.editAvatar(avatar, token)
     .then((data) => {
       setCurrentUser(data);
       closeAllPopups();
@@ -81,8 +83,9 @@ function App() {
   }
 
   function handleCardLike(card) {
-    const isLiked = card.likes.some(item => item._id === currentUser._id);
-    api.changeLikeCardStatus(card._id, !isLiked).then((newCard) => {
+    const token = localStorage.getItem('token')
+    const isLiked = card.likes.some(item => item === currentUser._id);
+    api.changeLikeCardStatus(card._id, !isLiked, token).then((newCard) => {
       const newCards = cards.map((c) => c._id === card._id ? newCard : c);
       setCards(newCards);
     })
@@ -97,7 +100,8 @@ function App() {
   }
 
   function handlePlaceDeleteAccept({cardDelete}) {
-    api.deleteCard(cardDelete._id).then(() => {
+    const token = localStorage.getItem('token')
+    api.deleteCard(cardDelete._id, token).then(() => {
       const newCards = cards.filter((c) => c._id !== cardDelete._id);
       setCards(newCards);
       closeAllPopups();
@@ -108,8 +112,9 @@ function App() {
   }
 
   function handleAddPlaceSubmit(newCardData) {
+    const token = localStorage.getItem('token')
     setIsLoading(true);
-    api.createCard(newCardData).then((newCard) => {
+    api.createCard(newCardData, token).then((newCard) => {
     setCards([newCard, ...cards]);
     closeAllPopups();
     })
@@ -122,9 +127,8 @@ function App() {
   }
 
   function handleRegister(newUserData) {
-    apiAuth.signUp(newUserData)
+    api.signUp(newUserData)
     .then((userData) => {
-      console.log(userData);
       history.push('/sign-in');
       setIsAcceptPopupOpen(true);
       setIsAuthAccept(true);
@@ -132,12 +136,11 @@ function App() {
     .catch((err) => {
       setIsAcceptPopupOpen(true);
       setIsAuthAccept(false);
-      console.log(err)
     })
   }
 
   function handleLogin({email, password}) {
-    apiAuth.singIn({email, password})
+    api.singIn({email, password})
     .then((data) => {
       localStorage.setItem('token', data.token);
       setLoggedIn(true);
@@ -180,12 +183,12 @@ function App() {
   React.useEffect(() => {
     if(localStorage.getItem('token')) {
       const token = localStorage.getItem('token')
-      apiAuth.checkToken(token)
+      api.checkToken(token)
       .then((res) => {
         if(res) {
           setLoggedIn(true);
           history.push('/')
-          setEmail(res.data.email);
+          setEmail(res.email);
           setHeaderLink('Выйти')
         }
       })
@@ -197,9 +200,10 @@ function App() {
 
   React.useEffect(() => {
     if (loggedIn) {
+      const token = localStorage.getItem('token');
       Promise.all([
-        api.getUserInfo(),
-        api.getInitialCards()
+        api.getUserInfo(token),
+        api.getInitialCards(token)
       ]).then(([data, items]) => {
         setCurrentUser(data);
         setCards(items);

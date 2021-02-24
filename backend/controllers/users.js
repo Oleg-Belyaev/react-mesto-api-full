@@ -1,66 +1,109 @@
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const NotFoundError = require('../errors/not-foud-error');
+const ValidationError = require('../errors/validation-error');
+const AuthError = require('../errors/auth-error');
+const RegistrError = require('../errors/registr-error');
 
-const getUsers = (req, res) => {
+const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
+    .catch(next);
 };
 
-const getUser = (req, res) => {
+const getUser = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (user === null) {
-        return res.status(404).send({ message: `Нет пользователя с id ${req.params.userId}` });
+        throw new NotFoundError(`Нет пользователя с id ${req.params.userId}`);
       }
       return res.send({ data: user });
     })
-    .catch((err) => {
-      if (!err.messageFormat) {
-        return res.status(404).send({ message: `Нет пользователя с id ${req.params.userId}` });
-      }
-      return res.status(500).send({ message: 'На сервере произошла ошибка' });
-    });
+    .catch(next);
 };
 
-const createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
+const getUserInfo = (req, res, next) => {
+  User.findById(req.user._id)
+    .then((user) => res.send(user))
+    .catch(next);
+};
 
-  User.create({ name, about, avatar })
-    .then((user) => res.send({ data: user }))
+const createUser = (req, res, next) => {
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+  bcrypt.hash(password, 10)
+    .then((hash) => User.create({
+      name,
+      about,
+      avatar,
+      email,
+      password: hash,
+    }))
+    .then((user) => {
+      if (!user) {
+        throw new ValidationError('Не корректные почта или пароль');
+      }
+      res.send(user);
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: err._message });
+        throw new ValidationError(err.message);
+      } else if (err.name === 'MongoError') {
+        throw new RegistrError('Пользователь с таким email уже существует');
       }
-      return res.status(500).send({ message: 'На сервере произошла ошибка' });
-    });
+      next(err);
+    })
+    .catch(next);
 };
 
-const updateUser = (req, res) => {
+const login = (req, res, next) => {
+  const { email, password } = req.body;
+  User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign(
+        { _id: user._id },
+        'some-secret-key',
+        { expiresIn: '7d' },
+      );
+
+      res.send({ token });
+    })
+    .catch((err) => {
+      throw new AuthError(err.message);
+    })
+    .catch(next);
+};
+
+const updateUser = (req, res, next) => {
   const { name, about } = req.body;
   const id = req.user._id;
 
   User.findByIdAndUpdate(id, { name, about }, { new: true, runValidators: true })
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: err._message });
+        throw new ValidationError(err.message);
       }
-      return res.status(500).send({ message: 'На сервере произошла ошибка' });
-    });
+      next(err);
+    })
+    .catch(next);
 };
 
-const updateAvatar = (req, res) => {
+const updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
   const id = req.user._id;
 
   User.findByIdAndUpdate(id, { avatar }, { new: true, runValidators: true })
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: err._message });
+        throw new ValidationError(err.message);
       }
-      return res.status(500).send({ message: 'На сервере произошла ошибка' });
-    });
+      next(err);
+    })
+    .catch(next);
 };
 
 module.exports = {
@@ -69,4 +112,6 @@ module.exports = {
   createUser,
   updateUser,
   updateAvatar,
+  login,
+  getUserInfo,
 };
