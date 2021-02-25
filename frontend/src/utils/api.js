@@ -126,7 +126,7 @@ const api = new Api ({
   headers: {
     'Content-Type': 'application/json'
   },
-  url: 'http://localhost:3001'
+  url: 'http://api.olegbelyaev.students.nomoreparties.space'
 });
 
 export { api };
