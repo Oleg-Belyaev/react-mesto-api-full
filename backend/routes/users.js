@@ -10,18 +10,6 @@ router.get('/:userId', celebrate({
     userId: Joi.string().alphanum().length(24),
   }),
 }), auth, controllers.getUser);
-router.post('/signup', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
-  }),
-}), controllers.createUser);
-router.post('/signin', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
-  }),
-}), controllers.login);
 router.patch('/me', celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
@@ -30,7 +18,7 @@ router.patch('/me', celebrate({
 }), auth, controllers.updateUser);
 router.patch('/me/avatar', celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().required().regex(/^http(s?)(:\/\/)((www.)?)(([^.]+)\.)?([a-zA-Z0-9\-_]+)(.com|.net|.gov|.org|.in|.ru)(\/[\S]*)?/),
+    avatar: Joi.string().required().regex(/^https?:\/\/[\w\-.~:/?#[\]@!$&'()*+,;=%]{4,2048}$/),
   }),
 }), auth, controllers.updateAvatar);
 
