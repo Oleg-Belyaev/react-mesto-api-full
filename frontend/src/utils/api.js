@@ -89,7 +89,7 @@ class Api {
   }
 
   signUp(newUserData) {
-    return fetch(`${this._url}/users/signup`, {
+    return fetch(`${this._url}/signup`, {
       method: 'POST',
       headers: this._headers,
       body: JSON.stringify({
@@ -101,7 +101,7 @@ class Api {
   }
 
   singIn(UserData) {
-    return fetch(`${this._url}/users/signin`, {
+    return fetch(`${this._url}/signin`, {
       method: 'POST',
       headers: this._headers,
       body: JSON.stringify({
@@ -126,7 +126,7 @@ const api = new Api ({
   headers: {
     'Content-Type': 'application/json'
   },
-  url: 'http://api.olegbelyaev.students.nomoreparties.space'
+  url: 'https://api.olegbelyaev.students.nomoreparties.space'
 });
 
 export { api };
